@@ -1,0 +1,59 @@
+<!doctype html>
+<html><head>
+<meta charset="utf-8"/>
+<title>Month 2 — Yard Waste × Units Heatmap</title>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+
+<style>
+html,body,#map { height:100%; margin:0; background:#0d0000; }
+.info.legend {
+  background:white; padding:8px 10px;
+  border-radius:6px; box-shadow:0 0 8px rgba(0,0,0,0.3);
+  font-family:sans-serif; font-size:13px; color:#000;
+}
+.legend-bar {
+  height:16px; width:220px;
+  background:linear-gradient(to right,#2a0000,#700000,#d92b00,#ff6600,#ffcc66);
+  border-radius:4px; margin-bottom:4px;
+}
+</style>
+</head>
+
+<body>
+<div id="map"></div>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet.heat/dist/leaflet-heat.js"></script>
+
+<script>
+const map=L.map('map').setView([39.1653, -86.5264], 13);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {maxZoom:19}).addTo(map);
+
+const pts = [[39.136, -86.503, 0.025], [39.139, -86.498, 0.025], [39.168, -86.507, 0.05], [39.159, -86.532, 0.025], [39.141, -86.543, 0.025], [39.176, -86.542, 0.025], [39.167, -86.501, 0.025], [39.167, -86.476, 0.025], [39.155, -86.504, 0.025], [39.183, -86.544, 0.05], [39.147, -86.515, 0.025], [39.151, -86.512, 0.025], [39.153, -86.511, 0.025], [39.138, -86.52, 0.025], [39.191, -86.53, 0.025], [39.158, -86.523, 0.025], [39.169000000000004, -86.485, 0.025], [39.197, -86.532, 0.025], [39.168, -86.477, 0.025], [39.131, -86.507, 0.025], [39.139, -86.5, 0.025], [39.154, -86.47200000000001, 0.025], [39.167, -86.546, 0.05], [39.17, -86.525, 0.025], [39.197, -86.547, 0.025], [39.126, -86.519, 0.025], [39.125, -86.519, 0.025], [39.13, -86.515, 0.025], [39.122, -86.52, 0.025], [39.138, -86.5, 0.025], [39.134, -86.516, 0.025], [39.171, -86.532, 0.15], [39.171, -86.533, 0.15], [39.171, -86.526, 0.025], [39.162, -86.543, 0.025], [39.160000000000004, -86.557, 0.025], [39.172000000000004, -86.536, 1.0], [39.163000000000004, -86.513, 0.025]];
+const gradient = {"0.0": "#2a0000", "0.25": "#700000", "0.50": "#d92b00", "0.75": "#ff6600", "1.0": "#ffcc66"};
+
+if (pts.length) {
+    L.heatLayer(pts, {
+        radius:30, blur:25, minOpacity:0.35, gradient:gradient
+    }).addTo(map);
+
+    const lats = pts.map(p => p[0]);
+    const lons = pts.map(p => p[1]);
+
+    map.fitBounds([[Math.min(...lats), Math.min(...lons)],
+                   [Math.max(...lats), Math.max(...lons)]]);
+}
+
+const legend = L.control({position:'bottomright'});
+legend.onAdd = function() {
+  const div = L.DomUtil.create('div', 'info legend');
+  div.innerHTML += '<div class="legend-bar"></div>';
+  div.innerHTML += `
+    <div style="display:flex;justify-content:space-between;width:220px;">
+      <span>Low</span><span>Med</span><span>High</span><span>Very High</span>
+    </div>`;
+  return div;
+};
+legend.addTo(map);
+</script>
+</body></html>
